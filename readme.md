@@ -5,6 +5,7 @@ using simple coding instructions
 
 ## instructions
 
-turn -> turn the frog to the left
-move  -> move by one tile
+turn(); -> turn the frog to the left 90°
+move(); -> move by one tile
+print("text") -> Print text to console;
 

@@ -1,15 +1,16 @@
 package org.kurodev.progfrog.game.util;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.util.Objects;
 
-@AllArgsConstructor
-@Getter
+
 public final class CoordinateImpl implements Coordinate {
     private final int x;
     private final int y;
+    public CoordinateImpl(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 
     @Override
     public boolean equals(Object o) {
