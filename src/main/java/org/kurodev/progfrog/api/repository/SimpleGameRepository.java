@@ -1,6 +1,7 @@
 package org.kurodev.progfrog.api.repository;
 
 import org.kurodev.progfrog.game.ProgFrogGame;
+import org.kurodev.progfrog.game.map.MapEditor;
 import org.kurodev.progfrog.script.JavaScriptManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ public class SimpleGameRepository implements GameRepository {
     private static final Logger logger = LoggerFactory.getLogger(SimpleGameRepository.class);
     private final Map<String, RepoItem<ProgFrogGame>> gameCache = new HashMap<>();
     private final Map<String, RepoItem<JavaScriptManager>> scriptCache = new HashMap<>();
+    private final Map<String, RepoItem<MapEditor>> editorCache = new HashMap<>();
 
     public SimpleGameRepository() {
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(r -> {
@@ -29,25 +31,30 @@ public class SimpleGameRepository implements GameRepository {
     }
 
     private void pruneCaches() {
-        int before = gameCache.keySet().size();
-        gameCache.entrySet().stream()
-                .filter(entry -> entry.getValue().isDirty())
-                .forEach(entry -> gameCache.remove(entry.getKey()));
-        int after = gameCache.keySet().size();
-        logger.info("Removed {} chached games", before - after);
+        logger.info("Removed {} cached games", pruneCache(gameCache));
+        logger.info("Removed {} cached scripts", pruneCache(scriptCache));
+        logger.info("Removed {} cached Map editor instances", pruneCache(editorCache));
+    }
 
-        before = scriptCache.keySet().size();
-        scriptCache.entrySet().stream()
-                .filter(stringRepoItemEntry -> stringRepoItemEntry.getValue().isDirty())
-                .forEach(entry -> scriptCache.remove(entry.getKey()));
-        after = scriptCache.keySet().size();
-        logger.info("Removed {} cached scripts", before - after);
+    private <T> int pruneCache(Map<String, RepoItem<T>> cache) {
+        int before = gameCache.keySet().size();
+        cache.entrySet().stream()
+                .filter(entry -> entry.getValue().isDirty())
+                .forEach(entry -> cache.remove(entry.getKey()));
+        int after = gameCache.keySet().size();
+        return before - after;
+    }
+
+    private boolean idExists(String id) {
+        return gameCache.containsKey(id)
+                || scriptCache.containsKey(id)
+                || editorCache.containsKey(id);
     }
 
     @Override
     public String getUniqueID() {
         String id = UUID.randomUUID().toString();
-        while (gameCache.containsKey(id)) {
+        while (idExists(id)) {
             id = UUID.randomUUID().toString();
         }
         return id;
@@ -85,6 +92,24 @@ public class SimpleGameRepository implements GameRepository {
         }
         result.lastModified = System.currentTimeMillis();
         return Optional.of(result.item);
+    }
+
+    @Override
+    @Cacheable("map-editors")
+    public Optional<MapEditor> findEditorById(String id) {
+        var result = editorCache.get(id);
+        if (result == null) {
+            return Optional.empty();
+        }
+        result.lastModified = System.currentTimeMillis();
+        return Optional.of(result.item);
+    }
+
+    @Override
+    public String storeEditor(MapEditor editor) {
+        String id = getUniqueID();
+        editorCache.put(id, new RepoItem<>(editor));
+        return id;
     }
 
     private static final class RepoItem<T> {

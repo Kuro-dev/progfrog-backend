@@ -3,11 +3,11 @@ package org.kurodev.progfrog.game.map;
 import org.kurodev.progfrog.game.util.Coordinate;
 
 public class ProgFrogLevel {
-    private ProgFrogTile[][] tiles;
-    private ProgFrogTile[][] initialState;
+    private TileType[][] tiles;
+    private TileType[][] initialState;
 
 
-    private ProgFrogLevel(ProgFrogTile[][] tiles) {
+    private ProgFrogLevel(TileType[][] tiles) {
         this.tiles = tiles;
         this.initialState = tiles.clone();
 
@@ -20,23 +20,20 @@ public class ProgFrogLevel {
 
     public static ProgFrogLevel fromString(String map, String delimiter) {
         String[] rows = map.trim().split(delimiter != null ? delimiter : "\n");
-        ProgFrogTile[][] tiles = new ProgFrogTile[rows.length][];
+        TileType[][] tiles = new TileType[rows.length][];
         for (int y = 0; y < rows.length; y++) {
-            ProgFrogTile[] row = new ProgFrogTile[rows[y].length()];
+            TileType[] row = new TileType[rows[y].length()];
             tiles[y] = row;
             for (int x = 0; x < rows[y].toCharArray().length; x++) {
-                row[x] = ProgFrogTile.fromString(rows[y].charAt(x));
+                row[x] = TileType.identifyStrict(rows[y].charAt(x));
             }
         }
         return new ProgFrogLevel(tiles);
     }
 
-    private void deepClone(ProgFrogTile[][] src, ProgFrogTile[][] dest) {
+    private void deepClone(TileType[][] src, TileType[][] dest) {
         for (int y = 0; y < src.length; y++) {
-            for (int x = 0; x < src[y].length; x++) {
-                if (src[y][x] != null)
-                    dest[y][x] = src[y][x].copy();
-            }
+            System.arraycopy(src[y], 0, dest[y], 0, src[y].length);
         }
     }
 
@@ -47,18 +44,18 @@ public class ProgFrogLevel {
         return x >= tiles[y].length;
     }
 
-    public ProgFrogTile getTile(int x, int y) {
+    public TileType getTile(int x, int y) {
         if (isOOB(x, y)) {
-            return ProgFrogTile.voidTile();
+            return TileType.VOID;
         }
         return tiles[y][x];
     }
 
-    public ProgFrogTile getTile(Coordinate pos) {
+    public TileType getTile(Coordinate pos) {
         return getTile(pos.getX(), pos.getY());
     }
 
-    public void setTile(int x, int y, ProgFrogTile newTile) {
+    public void setTile(int x, int y, TileType newTile) {
         tiles[y][x] = newTile;
     }
 
@@ -66,30 +63,42 @@ public class ProgFrogLevel {
         deepClone(initialState, tiles);
     }
 
-    public ProgFrogTile[][] getTiles() {
+    public TileType[][] getTiles() {
         return tiles;
+    }
+
+    public String toString(String delimiter) {
+        StringBuilder out = new StringBuilder();
+        for (int y = 0; y < tiles.length; y++) {
+            for (int x = 0; x < tiles[y].length; x++) {
+                TileType tile = getTile(x, y);
+                out.append(tile.getIdentifier());
+            }
+            out.append(delimiter);
+        }
+        return out.toString();
     }
 
     @Override
     public String toString() {
-        StringBuilder out = new StringBuilder();
-        ProgFrogTile fallback = ProgFrogTile.wallTile();
-        for (int y = 0; y < tiles.length; y++) {
-            for (int x = 0; x < tiles[y].length; x++) {
-                ProgFrogTile tile = getTile(x, y);
-                if (tile == null) {
-                    tile = fallback;
-                }
-                out.append(tile);
-            }
-            out.append("\n");
-        }
-        return out.toString();
+        return toString("\n");
     }
 
     public void update(String mapString, String delimiter) {
         ProgFrogLevel newLevel = fromString(mapString, delimiter);
         this.tiles = newLevel.tiles;
         this.initialState = newLevel.initialState;
+    }
+
+    public boolean hasFood(Coordinate position) {
+        return false;
+    }
+
+    public boolean tryRemoveFood(Coordinate position) {
+        return true;
+    }
+
+    public void addFood(Coordinate position) {
+
     }
 }

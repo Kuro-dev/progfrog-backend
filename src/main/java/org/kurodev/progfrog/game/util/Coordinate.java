@@ -1,6 +1,9 @@
 package org.kurodev.progfrog.game.util;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public interface Coordinate {
+    @JsonCreator
     static Coordinate of(int x, int y) {
         return new CoordinateImpl(x, y);
     }

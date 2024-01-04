@@ -1,4 +1,4 @@
-package org.kurodev.progfrog.api.dto;
+package org.kurodev.progfrog.api.dto.game;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotNull;

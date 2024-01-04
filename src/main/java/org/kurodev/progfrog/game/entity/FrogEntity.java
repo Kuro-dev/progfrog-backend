@@ -1,7 +1,7 @@
 package org.kurodev.progfrog.game.entity;
 
 import org.kurodev.progfrog.game.map.ProgFrogLevel;
-import org.kurodev.progfrog.game.map.ProgFrogTile;
+import org.kurodev.progfrog.game.map.TileType;
 import org.kurodev.progfrog.game.map.TileType;
 import org.kurodev.progfrog.game.util.Coordinate;
 import org.kurodev.progfrog.game.util.Direction;
@@ -64,7 +64,7 @@ public class FrogEntity implements Frog {
 
     private boolean checkNextTile() {
         final Coordinate nextPos = this.position.add(direction);
-        return level.getTile(nextPos).getType() == TileType.FLOOR;
+        return level.getTile(nextPos)== TileType.FLOOR;
     }
 
     public boolean peek() {
@@ -72,13 +72,11 @@ public class FrogEntity implements Frog {
     }
 
     public boolean checkFood() {
-        return level.getTile(position).hasFood();
+        return level.hasFood(position);
     }
 
     public void eat() {
-        ProgFrogTile tile = level.getTile(position);
-        if (tile.hasFood()) {
-            tile.removeFood();
+        if (level.tryRemoveFood(position)) {
             foodCount++;
         } else {
             throw new FrogException("There is no food at the frogs position.");
@@ -87,7 +85,7 @@ public class FrogEntity implements Frog {
 
     public void drop() {
         if (foodCount > 0) {
-            level.getTile(position).addFood();
+            level.addFood(position);
             foodCount--;
         } else {
             throw new FrogException("Cannot drop food, frog has none.");

@@ -32,7 +32,7 @@ public class JavaScriptManager {
         try {
             compiledScript = engine.compile(script);
         } catch (ScriptException e) {
-            result.setStacktrace(e.getStackTrace());
+            result.setException(e);
             throw e;
         }
     }
@@ -43,7 +43,7 @@ public class JavaScriptManager {
         try {
             compiledScript.eval();
         } catch (ScriptException e) {
-            result.setStacktrace(e.getStackTrace());
+            result.setException(e);
             throw e;
         }
         return result;

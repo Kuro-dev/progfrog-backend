@@ -1,22 +1,25 @@
 package org.kurodev.progfrog.api;
 
-import org.kurodev.progfrog.api.dto.CompileMapRequest;
-import org.kurodev.progfrog.api.dto.CompileMapResponse;
-import org.kurodev.progfrog.api.dto.CompileScriptRequest;
+import org.kurodev.progfrog.api.dto.game.CompileMapRequest;
+import org.kurodev.progfrog.api.dto.game.CompileMapResponse;
+import org.kurodev.progfrog.api.dto.game.CompileScriptRequest;
 import org.kurodev.progfrog.api.repository.GameRepository;
 import org.kurodev.progfrog.game.ProgFrogGame;
+import org.kurodev.progfrog.game.map.TileType;
 import org.kurodev.progfrog.script.JavaScriptManager;
 import org.kurodev.progfrog.script.ScriptResult;
 import org.springframework.context.annotation.Description;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.script.ScriptException;
 import java.util.Optional;
 
 @RestController("GameController")
+@RequestMapping("/game")
 public class Gamecontroller {
 
     private final GameRepository repository;
@@ -61,6 +64,4 @@ public class Gamecontroller {
         }
         return ResponseEntity.notFound().build();
     }
-
-
 }
