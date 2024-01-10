@@ -77,6 +77,11 @@ public class MapEditor {
                 row.add(TileType.VOID);
             }
         }
+        if (pos.equals(frogPosition)) {
+            setFrogPosition(null);
+            setFrogDirection(null);
+        }
+        foodItems.remove(pos);
         row.set(pos.x(), type);
     }
 
@@ -102,7 +107,11 @@ public class MapEditor {
     }
 
     public void setFood(Coordinate pos, int foodcount) {
-        foodItems.put(pos, foodcount);
+        if (foodcount > 0) {
+            foodItems.put(pos, foodcount);
+        } else {
+            foodItems.remove(pos);
+        }
     }
 
     public int getFoodcount(Coordinate pos) {

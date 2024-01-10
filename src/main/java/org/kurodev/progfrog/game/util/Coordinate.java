@@ -14,9 +14,18 @@ public interface Coordinate {
 
     @NotNull
     int y();
+    @NotNull
+    default int getX(){
+        return x();
+    };
+
+    @NotNull
+    default int getY(){
+        return y();
+    };
 
     default Coordinate add(Coordinate other) {
-        return new CoordinateImpl(x() + other.x(), y() + other.y());
+        return of(x() + other.x(), y() + other.y());
     }
 
     @Override

@@ -1,7 +1,9 @@
 package org.kurodev.progfrog.game.util;
 
 
-public record CoordinateImpl(int x, int y) implements Coordinate {
+import jakarta.validation.constraints.NotNull;
+
+public record CoordinateImpl(@NotNull int x, @NotNull int y) implements Coordinate {
 
 
     @Override
