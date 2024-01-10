@@ -52,7 +52,7 @@ public class ProgFrogLevel {
     }
 
     public TileType getTile(Coordinate pos) {
-        return getTile(pos.getX(), pos.getY());
+        return getTile(pos.x(), pos.y());
     }
 
     public void setTile(int x, int y, TileType newTile) {

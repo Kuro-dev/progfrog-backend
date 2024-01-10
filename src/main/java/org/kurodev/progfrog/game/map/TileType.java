@@ -1,6 +1,5 @@
 package org.kurodev.progfrog.game.map;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(enumAsRef = true)
@@ -11,7 +10,8 @@ public enum TileType {
     FLOOR("0"),
 
     VOID("#"),
-    ;
+
+    NONE("^");
     private final String identifier;
 
     TileType(String identifier) {
@@ -40,10 +40,9 @@ public enum TileType {
             if (value.matches(s))
                 return value;
         }
-        throw new MapValidationException("Unrecognised tile: " + s);
+        throw new MapValidationException("Unrecognised tile: \"" + s + "\"");
     }
 
-    @JsonValue
     public String getIdentifier() {
         return identifier;
     }

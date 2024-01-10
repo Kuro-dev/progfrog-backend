@@ -1,6 +1,7 @@
 package org.kurodev.progfrog.game.util;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import jakarta.validation.constraints.NotNull;
 
 public interface Coordinate {
     @JsonCreator
@@ -8,11 +9,19 @@ public interface Coordinate {
         return new CoordinateImpl(x, y);
     }
 
-    int getX();
+    @NotNull
+    int x();
 
-    int getY();
+    @NotNull
+    int y();
 
     default Coordinate add(Coordinate other) {
-        return new CoordinateImpl(getX() + other.getX(), getY() + other.getY());
+        return new CoordinateImpl(x() + other.x(), y() + other.y());
     }
+
+    @Override
+    boolean equals(Object other);
+
+    @Override
+    int hashCode();
 }

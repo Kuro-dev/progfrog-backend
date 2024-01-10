@@ -1,12 +1,18 @@
 package org.kurodev.progfrog.game.map;
 
 import org.kurodev.progfrog.game.util.Coordinate;
+import org.kurodev.progfrog.game.util.Direction;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MapEditor {
     private final List<List<TileType>> map;
+    private final Map<Coordinate, Integer> foodItems = new HashMap<>();
+    private Coordinate frogPosition;
+    private Direction frogDirection;
 
     private MapEditor() {
         map = new ArrayList<>();
@@ -18,35 +24,60 @@ public class MapEditor {
         return editor;
     }
 
-    private boolean isOOB(Coordinate pos) {
-        if (pos.getY() >= map.size()) {
+    public Coordinate getFrogPosition() {
+        return frogPosition;
+    }
+
+    public void setFrogPosition(Coordinate position) {
+
+        this.frogPosition = position;
+    }
+
+    public Direction getFrogDirection() {
+        return frogDirection;
+    }
+
+    public void setFrogDirection(Direction direction) {
+        this.frogDirection = direction;
+    }
+
+    public boolean isOOB(Coordinate pos) {
+        if (pos.y() >= map.size()) {
             return true;
         }
-        return pos.getX() >= map.get(pos.getY()).size();
+        return pos.x() >= map.get(pos.y()).size();
     }
 
     public TileType getTile(Coordinate pos) {
         if (isOOB(pos)) {
             return TileType.VOID;
         }
-        return map.get(pos.getY()).get(pos.getX());
+        return map.get(pos.y()).get(pos.x());
+    }
+
+    private void deleteTile(Coordinate pos) {
+        map.get(pos.y()).remove(pos.x());
     }
 
     public void setTile(Coordinate pos, TileType type) {
-        if (pos.getY() >= map.size()) {
-            int diff = 1 + pos.getY() - map.size();
+        if (type == TileType.NONE) {
+            deleteTile(pos);
+            return;
+        }
+        if (pos.y() >= map.size()) {
+            int diff = 1 + pos.y() - map.size();
             for (int i = 0; i < diff; i++) {
                 map.add(new ArrayList<>());
             }
         }
-        List<TileType> row = map.get(pos.getY());
-        if (pos.getX() >= row.size()) {
-            int diff = 1 + pos.getX() - row.size();
+        List<TileType> row = map.get(pos.y());
+        if (pos.x() >= row.size()) {
+            int diff = 1 + pos.x() - row.size();
             for (int i = 0; i < diff; i++) {
                 row.add(TileType.VOID);
             }
         }
-        row.set(pos.getX(), type);
+        row.set(pos.x(), type);
     }
 
     private void init(int initialWidth, int initialHeight) {
@@ -70,11 +101,23 @@ public class MapEditor {
 
     }
 
+    public void setFood(Coordinate pos, int foodcount) {
+        foodItems.put(pos, foodcount);
+    }
+
+    public int getFoodcount(Coordinate pos) {
+        return foodItems.getOrDefault(pos, 0);
+    }
+
     public String toString(String delimiter) {
         StringBuilder out = new StringBuilder();
         for (int y = 0; y < map.size(); y++) {
             for (int x = 0; x < map.get(y).size(); x++) {
                 TileType tile = getTile(Coordinate.of(x, y));
+                if (tile == null) {
+                    System.out.println(out);
+                    System.out.println(x + ", " + y);
+                }
                 out.append(tile.getIdentifier());
             }
             out.append(delimiter);
@@ -85,5 +128,19 @@ public class MapEditor {
     @Override
     public String toString() {
         return toString("\n");
+    }
+
+    public void setMap(String map) {
+        this.map.clear();
+        String[] rows = map.split("\n");
+        for (int y = 0; y < rows.length; y++) {
+            for (int x = 0; x < rows[y].length(); x++) {
+                setTile(Coordinate.of(x, y), TileType.identifyStrict(rows[y].charAt(x)));
+            }
+        }
+    }
+
+    public Map<Coordinate, Integer> getFoodItems() {
+        return foodItems;
     }
 }

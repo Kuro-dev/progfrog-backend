@@ -7,7 +7,6 @@ import org.kurodev.progfrog.game.ProgFrogGame;
 import org.kurodev.progfrog.game.map.ProgFrogLevel;
 
 public record CompileMapRequest(
-        FrogDataDTO frogData,
         @Parameter(description = "Optional mapId to override an existing map.")
         @Nullable
         String mapId,
@@ -17,9 +16,4 @@ public record CompileMapRequest(
         @Parameter(description = "Optional delimiter. Default is \\n")
         @Nullable
         String rowDelimiter) {
-
-    public ProgFrogGame toGame() {
-        ProgFrogLevel level = ProgFrogLevel.fromString(map, rowDelimiter);
-        return new ProgFrogGame(level, frogData.initialDirection(), frogData.frogPosition());
-    }
 }

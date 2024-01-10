@@ -5,7 +5,6 @@ import org.kurodev.progfrog.api.dto.game.CompileMapResponse;
 import org.kurodev.progfrog.api.dto.game.CompileScriptRequest;
 import org.kurodev.progfrog.api.repository.GameRepository;
 import org.kurodev.progfrog.game.ProgFrogGame;
-import org.kurodev.progfrog.game.map.TileType;
 import org.kurodev.progfrog.script.JavaScriptManager;
 import org.kurodev.progfrog.script.ScriptResult;
 import org.springframework.context.annotation.Description;
@@ -20,11 +19,11 @@ import java.util.Optional;
 
 @RestController("GameController")
 @RequestMapping("/game")
-public class Gamecontroller {
+public class GameController {
 
     private final GameRepository repository;
 
-    public Gamecontroller(GameRepository repository) {
+    public GameController(GameRepository repository) {
 
         this.repository = repository;
     }
@@ -32,9 +31,9 @@ public class Gamecontroller {
     @PostMapping("/compileMap")
     @Description("Compiles the map. This is the first step to running the game.")
     public ResponseEntity<CompileMapResponse> compileMap(@RequestBody CompileMapRequest request) {
-        ProgFrogGame game = request.toGame();
-        String id = repository.storeGame(game);
-        return ResponseEntity.ok(new CompileMapResponse(id));
+//        ProgFrogGame game = request.toGame();
+//        String id = repository.storeGame(game);
+        return ResponseEntity.ok(null);
     }
 
     @PostMapping("/compileScript")

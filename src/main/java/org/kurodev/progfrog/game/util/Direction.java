@@ -1,5 +1,8 @@
 package org.kurodev.progfrog.game.util;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(enumAsRef = true)
 
 public enum Direction implements Coordinate {
     NORTH(0, -1),
@@ -17,12 +20,12 @@ public enum Direction implements Coordinate {
     }
 
     @Override
-    public int getX() {
+    public int x() {
         return x;
     }
 
     @Override
-    public int getY() {
+    public int y() {
         return y;
     }
 
