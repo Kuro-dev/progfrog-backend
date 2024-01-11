@@ -76,7 +76,6 @@ public class ScriptEngineTest {
                 XXXXXXXXXX
                 XXXXXXXXXX
                 """;
-        repository.updateMap(id, mapUpdated);
         manager.execute();
         assertEquals(2, manager.getResult().getCallStack().size());
     }

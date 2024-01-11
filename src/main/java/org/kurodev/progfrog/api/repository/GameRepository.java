@@ -3,6 +3,7 @@ package org.kurodev.progfrog.api.repository;
 import org.kurodev.progfrog.game.ProgFrogGame;
 import org.kurodev.progfrog.game.map.MapEditor;
 import org.kurodev.progfrog.script.JavaScriptManager;
+import org.kurodev.progfrog.script.ScriptResult;
 
 import java.util.Optional;
 
@@ -18,23 +19,15 @@ public interface GameRepository {
 
     Optional<ProgFrogGame> findGameByID(String id);
 
-    default String storeScript(JavaScriptManager script) {
-        return storeScript(getUniqueID(), script);
+    default String storeScriptResult(ScriptResult result) {
+        return storeScriptResult(getUniqueID(), result);
     }
 
-    String storeScript(String id, JavaScriptManager script);
+    String storeScriptResult(String id, ScriptResult result);
 
-    Optional<JavaScriptManager> findScriptById(String id);
+    Optional<ScriptResult> findScriptById(String id);
 
     Optional<MapEditor> findEditorById(String id);
 
     String storeEditor(MapEditor editor);
-
-    default void updateMap(String gameId, String level) {
-        findGameByID(gameId).ifPresent(found -> {
-            found.setLevel(level);
-            storeGame(gameId, found);
-        });
-    }
-
 }

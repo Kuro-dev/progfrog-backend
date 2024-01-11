@@ -2,16 +2,15 @@ package org.kurodev.progfrog.game.map;
 
 import org.kurodev.progfrog.game.util.Coordinate;
 
-public class ProgFrogLevel {
-    private TileType[][] tiles;
-    private TileType[][] initialState;
+import java.util.HashMap;
+import java.util.Map;
 
+public class ProgFrogLevel {
+    private final Map<Coordinate, Integer> foodItems = new HashMap<>();
+    private TileType[][] tiles;
 
     private ProgFrogLevel(TileType[][] tiles) {
         this.tiles = tiles;
-        this.initialState = tiles.clone();
-
-        deepClone(this.tiles, initialState);
     }
 
     public static ProgFrogLevel fromString(String map) {
@@ -31,10 +30,8 @@ public class ProgFrogLevel {
         return new ProgFrogLevel(tiles);
     }
 
-    private void deepClone(TileType[][] src, TileType[][] dest) {
-        for (int y = 0; y < src.length; y++) {
-            System.arraycopy(src[y], 0, dest[y], 0, src[y].length);
-        }
+    public Map<Coordinate, Integer> getFoodItems() {
+        return foodItems;
     }
 
     private boolean isOOB(int x, int y) {
@@ -59,10 +56,6 @@ public class ProgFrogLevel {
         tiles[y][x] = newTile;
     }
 
-    public void reset() {
-        deepClone(initialState, tiles);
-    }
-
     public TileType[][] getTiles() {
         return tiles;
     }
@@ -84,12 +77,6 @@ public class ProgFrogLevel {
         return toString("\n");
     }
 
-    public void update(String mapString, String delimiter) {
-        ProgFrogLevel newLevel = fromString(mapString, delimiter);
-        this.tiles = newLevel.tiles;
-        this.initialState = newLevel.initialState;
-    }
-
     public boolean hasFood(Coordinate position) {
         return false;
     }
@@ -99,6 +86,6 @@ public class ProgFrogLevel {
     }
 
     public void addFood(Coordinate position) {
-
+        foodItems.put(position, foodItems.computeIfAbsent(position, c -> 0) + 1);
     }
 }

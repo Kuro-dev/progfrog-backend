@@ -1,0 +1,12 @@
+name: progfrog-core
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=core
+      - POSTGRES_DB=progfrog
+      - POSTGRES_PASSWORD=pw123
+    ports:
+      - 15432:5432
+    volumes:
+      - ./mounts/postgres/data:/var/lib/postgresql/data

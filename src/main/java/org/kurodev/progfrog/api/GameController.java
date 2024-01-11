@@ -1,10 +1,10 @@
 package org.kurodev.progfrog.api;
 
-import org.kurodev.progfrog.api.dto.game.CompileMapRequest;
-import org.kurodev.progfrog.api.dto.game.CompileMapResponse;
 import org.kurodev.progfrog.api.dto.game.CompileScriptRequest;
+import org.kurodev.progfrog.api.dto.game.ScriptResultDTO;
 import org.kurodev.progfrog.api.repository.GameRepository;
 import org.kurodev.progfrog.game.ProgFrogGame;
+import org.kurodev.progfrog.game.map.MapEditor;
 import org.kurodev.progfrog.script.JavaScriptManager;
 import org.kurodev.progfrog.script.ScriptResult;
 import org.springframework.context.annotation.Description;
@@ -28,38 +28,18 @@ public class GameController {
         this.repository = repository;
     }
 
-    @PostMapping("/compileMap")
-    @Description("Compiles the map. This is the first step to running the game.")
-    public ResponseEntity<CompileMapResponse> compileMap(@RequestBody CompileMapRequest request) {
-//        ProgFrogGame game = request.toGame();
-//        String id = repository.storeGame(game);
-        return ResponseEntity.ok(null);
-    }
-
     @PostMapping("/compileScript")
     @Description("Compiles the script to be executed. May throw syntax errors.")
-    public ResponseEntity<CompileMapResponse> compileScript(@RequestBody CompileScriptRequest request) throws ScriptException {
-        Optional<ProgFrogGame> game = repository.findGameByID(request.mapID());
-        if (game.isPresent()) {
-            JavaScriptManager manager = new JavaScriptManager(game.get());
+    public ResponseEntity<ScriptResultDTO> compileScript(@RequestBody CompileScriptRequest request) throws ScriptException {
+        Optional<MapEditor> map = repository.findEditorById(request.mapID());
+        if (map.isPresent()) {
+            ProgFrogGame game = map.get().toGame();
+            JavaScriptManager manager = new JavaScriptManager(game);
             manager.compile(request.script());
-            String id = repository.storeScript(manager);
-            return ResponseEntity.ok(new CompileMapResponse(id));
-        }
-        return ResponseEntity.notFound().build();
-    }
-
-    @PostMapping("/execute")
-    @Description("Executes the given script.")
-    public ResponseEntity<ScriptResult> executeScript(@RequestBody String scriptId) {
-        Optional<JavaScriptManager> game = repository.findScriptById(scriptId);
-        if (game.isPresent()) {
-            try {
-                ScriptResult result = game.get().execute();
-                return ResponseEntity.ok(result);
-            } catch (ScriptException e) {
-                return ResponseEntity.internalServerError().body(game.get().getResult());
-            }
+            manager.execute();
+            ScriptResult result = manager.getResult();
+            String id = repository.storeScriptResult(result);
+            return ResponseEntity.ok(ScriptResultDTO.of(request.mapID(), request.mapID(), result));
         }
         return ResponseEntity.notFound().build();
     }

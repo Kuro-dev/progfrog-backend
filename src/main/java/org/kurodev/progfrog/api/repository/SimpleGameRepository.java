@@ -3,6 +3,7 @@ package org.kurodev.progfrog.api.repository;
 import org.kurodev.progfrog.game.ProgFrogGame;
 import org.kurodev.progfrog.game.map.MapEditor;
 import org.kurodev.progfrog.script.JavaScriptManager;
+import org.kurodev.progfrog.script.ScriptResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class SimpleGameRepository implements GameRepository {
     private static final Logger logger = LoggerFactory.getLogger(SimpleGameRepository.class);
     private final Map<String, RepoItem<ProgFrogGame>> gameCache = new HashMap<>();
-    private final Map<String, RepoItem<JavaScriptManager>> scriptCache = new HashMap<>();
+    private final Map<String, RepoItem<ScriptResult>> scriptCache = new HashMap<>();
     private final Map<String, RepoItem<MapEditor>> editorCache = new HashMap<>();
 
     public SimpleGameRepository() {
@@ -67,7 +68,7 @@ public class SimpleGameRepository implements GameRepository {
     }
 
     @Override
-    public String storeScript(String id, JavaScriptManager script) {
+    public String storeScriptResult(String id, ScriptResult script) {
         scriptCache.put(id, new RepoItem<>(script));
         return id;
     }
@@ -85,7 +86,7 @@ public class SimpleGameRepository implements GameRepository {
 
     @Override
     @Cacheable("scripts")
-    public Optional<JavaScriptManager> findScriptById(String id) {
+    public Optional<ScriptResult> findScriptById(String id) {
         var result = scriptCache.get(id);
         if (result == null) {
             return Optional.empty();

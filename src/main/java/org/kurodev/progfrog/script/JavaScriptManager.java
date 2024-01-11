@@ -12,13 +12,14 @@ import javax.script.ScriptException;
 
 public class JavaScriptManager {
     private static final ScriptEngineManager manager = new ScriptEngineManager();
-    private final ScriptResult result = new ScriptResult();
+    private final ScriptResult result;
     private final JavaScriptEngine engine = (JavaScriptEngine) manager.getEngineByName("java");
     private final ProgFrogGame game;
     private CompiledScript compiledScript = null;
 
     public JavaScriptManager(ProgFrogGame game) {
         this.game = game;
+        result = new ScriptResult(game);
         engine.setExecutionStrategyFactory((clazz) -> MethodExecutionStrategy.byMatchingArguments(clazz, "main"));
         engine.setConstructorStrategy(DefaultConstructorStrategy.byMatchingArguments(new InterceptedFrog(game, result.getCallStack())));
     }
@@ -38,8 +39,6 @@ public class JavaScriptManager {
     }
 
     public ScriptResult execute() throws ScriptException {
-        result.reset();
-        game.reset();
         try {
             compiledScript.eval();
         } catch (ScriptException e) {

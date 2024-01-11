@@ -1,5 +1,6 @@
 package org.kurodev.progfrog.game.map;
 
+import org.kurodev.progfrog.game.ProgFrogGame;
 import org.kurodev.progfrog.game.util.Coordinate;
 import org.kurodev.progfrog.game.util.Direction;
 
@@ -151,5 +152,9 @@ public class MapEditor {
 
     public Map<Coordinate, Integer> getFoodItems() {
         return foodItems;
+    }
+
+    public ProgFrogGame toGame() {
+        return new ProgFrogGame(ProgFrogLevel.fromString(this.toString()), getFrogDirection(), getFrogPosition());
     }
 }
